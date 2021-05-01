@@ -47,7 +47,10 @@ router.route("/")
 router.route("/:userId")
     .get((req, res, _) => {
         User.findById(req.params.userId)
-            .populate("cart")
+            .populate({
+                path: "cart",
+                select: ["item", "quantity"]
+            })
             .then((user) => {
                 let response = resp.responseWith({
                     response: resp.SUCCESS_200,

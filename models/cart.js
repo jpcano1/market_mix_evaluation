@@ -8,10 +8,20 @@ Cart = new Schema({
     },
     quantity: {
         type: Number,
-        default: 0
+        required: true,
+        min: 1
     },
     item: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Item"
+        ref: "Item",
     }
 })
+
+Cart.index({
+    customer: 1,
+    item: 1
+}, {
+    unique: true
+})
+
+module.exports = mongoose.model("Cart", Cart);

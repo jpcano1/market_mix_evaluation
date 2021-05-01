@@ -5,6 +5,7 @@ const logger = require('morgan');
 // Routes
 const usersRouter = require('./routes/users');
 const itemRouter = require("./routes/items");
+const cartRouter = require("./routes/cart");
 
 // Configurations
 const config = require("./config");
@@ -29,5 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
 app.use("/items", itemRouter);
+app.use("/cart", cartRouter);
 
 module.exports = app;
