@@ -7,7 +7,7 @@ const Item = new Schema({
     name: {
         type: "String",
         required: true,
-        default: ""
+        unique: true
     },
     price: {
         type: Currency,

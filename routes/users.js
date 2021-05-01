@@ -25,7 +25,7 @@ router.route("/")
         User.create(req.body)
             .then((createdUser) => {
                 let response = resp.responseWith({
-                    response: resp.SUCCESS_200,
+                    response: resp.SUCCESS_201,
                     value: createdUser
                 });
                 res.statusCode = response[1];
