@@ -5,16 +5,15 @@ let User = new Schema({
     username: {
         type: String,
         required: true,
-        default: "",
         unique: true
     },
     admin: {
         type: Boolean,
         default: false
     },
-    items: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Item"
+    cart: [{
+        type: Schema.Types.ObjectId,
+        ref: "Cart"
     }]
 });
 
