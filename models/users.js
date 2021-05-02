@@ -11,10 +11,6 @@ let User = new Schema({
         type: Boolean,
         default: false
     },
-    cart: [{
-        type: Schema.Types.ObjectId,
-        ref: "Cart"
-    }]
 });
 
 module.exports = mongoose.model("User", User);
