@@ -4,6 +4,9 @@ const User = require("../models/users");
 const bodyParser = require("body-parser");
 const resp = require("../utils/responses");
 
+const passport = require("passport");
+const authenticate = require("../authenticate");
+
 router.use(bodyParser.json());
 
 /* GET users listing. */
@@ -20,29 +23,57 @@ router.route("/")
                 res.json(response[0]);
             }, (err) => next(err))
             .catch((err) => next(err));
+    });
+
+router.post("/signup", (req, res, next) => {
+    User.register(new User({
+        username: req.body.username
+    }), req.body.password, (err, user) => {
+        let response;
+        if (err) {
+            response = resp.responseWith({
+                response: resp.SERVER_ERROR_500,
+                error: err
+            });
+            res.statusCode = response[1];
+            res.headers = response[2];
+            res.json(response[0]);
+        } else {
+            user.admin = req.body.admin === true;
+            user.save()
+                .then((_) => {
+                    passport.authenticate(
+                        "local",
+                    )(req, res, () => {
+                        res.statusCode = 201;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json({
+                            success: true,
+                            status: "Registration Successful!"
+                        });
+                    })
+                }, (err) => next(err));
+        }
     })
-    .post((req, res, next) => {
-        User.create(req.body)
-            .then((createdUser) => {
-                let response = resp.responseWith({
-                    response: resp.SUCCESS_201,
-                    value: createdUser
-                });
-                res.statusCode = response[1];
-                res.headers = response[2];
-                res.json(response[0]);
-            }, (err) => next(err))
-            .catch((err) => next(err));
+});
+
+router.post("/login", passport.authenticate("local"), (req, res, _) => {
+    let token = authenticate.getToken({
+        _id: req.user._id
     })
-    .put((req, res, _) => {
-        let response = resp.responseWith({
-            response: resp.FORBIDDEN_403,
-            error: "PUT operation not supported on /users"
-        });
-        res.statusCode = response[1];
-        res.headers = response[2];
-        res.json(response[0]);
-    })
+
+    let response = resp.responseWith({
+        response: resp.SUCCESS_200,
+        value: {
+            "message": "You are successfully logged in!",
+            "token": token
+        }
+    });
+
+    res.statusCode = response[1];
+    res.headers = response[2];
+    res.json(response[0]);
+})
 
 router.route("/:userId")
     .get((req, res, _) => {
