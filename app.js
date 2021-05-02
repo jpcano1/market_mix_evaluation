@@ -6,6 +6,7 @@ const logger = require('morgan');
 const usersRouter = require('./routes/users');
 const itemRouter = require("./routes/items");
 const cartRouter = require("./routes/cart");
+const createError = require("http-errors");
 
 // Configurations
 const config = require("./config");
@@ -31,5 +32,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 app.use("/items", itemRouter);
 app.use("/cart", cartRouter);
+
+app.use((req, res, next) => {
+    next(createError(404));
+})
+
+app.use((err, req, res, _) => {
+    res.locals.error = req.app.get("env") === "development"? err: {};
+
+    res.status(err.status || 500);
+    res.json({
+        "error": err.message
+    })
+})
 
 module.exports = app;

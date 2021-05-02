@@ -99,6 +99,7 @@ router.route("/items/:itemId")
                 }
                 res.statusCode = response[1];
                 res.headers = response[2];
+                res.json(response[0])
             })
     })
 
